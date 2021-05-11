@@ -14,7 +14,7 @@ module Middleman
           token = req.params["token"]
 
           if token.nil?
-            return [204, {"Location" => "/"}, ["Token required"]]
+            return [200, {"Content-Type" => "text/plain"}, []]
           end
 
           begin
