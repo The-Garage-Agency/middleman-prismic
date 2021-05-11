@@ -13,22 +13,24 @@ module Middleman
         if req.path =~ %r(^/preview)
           token = req.params["token"]
 
-          if token.present?
-            begin
-              stdout_and_stderr, status = Open3.capture2e("middleman", "prismic", "--ref", token)
+          if token.nil?
+            [500, {"Location" => "/?error=preview_failure"}, ["Invalid token"]]
+          end
 
-              if status.success?
-                [302, {"Location" => preview_url(token)}, ["Found"]]
-              else
-                [500, {"Location" => "/?error=preview_failure"}, [stdout_and_stderr]]
-              end
-            rescue Exception => e
-              [
-                500,
-                {"Location" => "/?error=preview_failue"},
-                [e.message, "\n\t#{e.backtrace.join("\n\t")}" ]
-              ]
+          begin
+            stdout_and_stderr, status = Open3.capture2e("middleman", "prismic", "--ref", token)
+
+            if status.success?
+              [302, {"Location" => preview_url(token)}, ["Found"]]
+            else
+              [500, {"Location" => "/?error=preview_failure"}, [stdout_and_stderr]]
             end
+          rescue Exception => e
+            [
+              500,
+              {"Location" => "/?error=preview_failue"},
+              [e.message, "\n\t#{e.backtrace.join("\n\t")}" ]
+            ]
           end
         else
           @app.call(env)
