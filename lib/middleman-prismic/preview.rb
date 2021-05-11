@@ -14,7 +14,7 @@ module Middleman
           token = req.params["token"]
 
           if token.nil?
-            return [302, {"Location" => "/?error=preview_failure"}, ["Invalid token"]]
+            return [302, {"Location" => "/"}, ["Token required"]]
           end
 
           begin
