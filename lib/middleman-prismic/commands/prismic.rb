@@ -31,7 +31,7 @@ module Middleman
 
       def prismic
         create_directories
-        paginate_available_documents
+        output_documents_by_locale
         output_references
         output_custom_queries
       end
@@ -46,21 +46,21 @@ module Middleman
         FileUtils.mkdir_p(DATA_DIR)
       end
 
-      def paginate_available_documents
+      def paginate_documents_for_locale(locale)
         page = 0
 
         begin
           page += 1
-          api_form.page(page)
-          response = api_response(api_form)
+          request = api.form('everything', { lang: locale }).page(page)
+          response = api_response(request)
 
-          output_available_documents(response)
+          output_available_documents(response, locale)
         end while page < response.total_pages
       end
 
-      def output_available_documents(response)
+      def output_available_documents(response, locale)
         response.group_by(&:type).each do |document_type, documents|
-          document_dir = File.join(DATA_DIR, document_type.pluralize)
+          document_dir = File.join(DATA_DIR, locale, document_type.pluralize)
           write_collection(document_dir, documents)
         end
       end
@@ -71,11 +71,10 @@ module Middleman
         end
       end
 
-      def output_custom_queries
-        Middleman::Prismic.options.custom_queries.each do |key, value|
-          document_dir = File.join(DATA_DIR, "custom_#{key}")
-          response = api.form('everything').query(*value).submit(api.master_ref)
-          write_collection(document_dir, response)
+      def output_documents_by_locale
+        Middleman::Prismic.options.locales.each do |locale|
+          FileUtils.mkdir_p(File.join(DATA_DIR, locale))
+          paginate_documents_for_locale(locale)
         end
       end
 
