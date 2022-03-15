@@ -33,7 +33,6 @@ module Middleman
         create_directories
         output_documents_by_locale
         output_references
-        output_custom_queries
       end
 
       private
