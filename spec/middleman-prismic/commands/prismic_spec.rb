@@ -44,34 +44,6 @@ describe Middleman::Cli::Prismic do
       expect(File).to exist(reference_path)
     end
 
-    it "outputs any custom queries" do
-      prismic_query = double("prismic_query")
-      stub_options(
-        custom_queries: {
-          test: [prismic_query]
-        }
-      )
-      document = double("document", id: "thing", to_yaml: "yaml")
-      response = double(
-        "response",
-        group_by: { "foo" => [document] },
-        each: [document],
-        total_pages: 1,
-      )
-      api_form = stub_prismic_api(response)
-      allow(api_form).to receive(:query).and_return(api_form)
-
-      custom_path = File.join(described_class::DATA_DIR, "custom_test")
-      expect(File).not_to exist(custom_path)
-
-      described_class.new.prismic
-
-      expect(File).to exist(custom_path)
-      expect(api_form).
-        to have_received(:query).
-          with(prismic_query)
-    end
-
     it "downloads via prismic ref" do
       stub_options
       response = double("response", group_by: [], total_pages: 1)
@@ -92,7 +64,6 @@ describe Middleman::Cli::Prismic do
         access_token: nil,
         api_url: "http://example.com",
         release: "release",
-        custom_queries: [],
       }.merge(hash)
     )
     allow(Middleman::Prismic).to receive(:options).and_return(options)

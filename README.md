@@ -36,7 +36,6 @@ activate :prismic do |f|
   f.api_url = 'https://testrepositorymiddleman.prismic.io/api'
   f.release = 'master'
   f.link_resolver = ->(link) { binding.pry; "#{link.type.pluralize}/#{link.slug}"}
-  f.custom_queries = { test: [Prismic::Predicates::at('document.type', 'product')] }
 end
 ```
 

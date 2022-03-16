@@ -14,7 +14,7 @@ module Middleman
       option :release, 'master', 'Content release'
       option :access_token, nil, 'Access token (optional)'
       option :link_resolver, ->(_link) {"/"}, 'The link resolver'
-      option :custom_queries, {}, 'Custom queries'
+      option :locales, {}, 'Supported languages'
 
       def initialize(app, options_hash={}, &block)
         super
