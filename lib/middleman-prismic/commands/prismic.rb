@@ -72,8 +72,8 @@ module Middleman
 
       def output_documents_by_locale
         Middleman::Prismic.options.locales.each do |locale|
-          FileUtils.mkdir_p(File.join(DATA_DIR, locale))
-          paginate_documents_for_locale(locale)
+          FileUtils.mkdir_p(File.join(DATA_DIR, locale.to_s))
+          paginate_documents_for_locale(locale.to_s)
         end
       end
 
